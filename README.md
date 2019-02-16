@@ -129,6 +129,19 @@ In a small project like this in which you are working alone you don't actually n
 
 You can manually create a S3 bucket and a DynamoDB table to store your terraform backend. I could have created a bash script for creating these entities but I use myself the same S3 bucket and the same DynamoDB table for all my projects so this is basically a one-time task. So, create a S3 bucket and a DynamoDB table. For DynamoDB table you need to name the Partition key as "LockID" (type String). Then configure the S3 bucket name and DynamoDB table name in [dev.tf](terraform/envs/dev/dev.tf).
 
+Then create yourself AWS access and secret key. Go to AWS portal / IAM / YOUR-USER-ACCOUNT. You can find there "Security credentials" section => create the keys here. Then you should create an AWS profile to the configuration section in your ~/.aws/credentials. Add a section for your AWS account and copy-paste the keys there, e.g.:
+
+```text
+[my-aws-profile]
+aws_access_key_id = YOUR-ACCESS-KEY
+aws_secret_access_key = YOUR-SECRET-KEY
+```
+
+Whenever you give terraform commands or use aws cli you should give the environment variable with the command, e.g.:
+
+```bash
+AWS_PROFILE=MY-PROFILE terraform init
+```
 
 
 # Demonstration Manuscript
