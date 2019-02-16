@@ -9,8 +9,8 @@
 - [Terraform File Types](#terraform-file-types)
 - [Terraform Env and Modules](#terraform-env-and-modules)
   - [Env Parameters](#env-parameters)
-  - [Env-dev Module](#env-dev-module)
-  - [Resource-group Module](#resource-group-module)
+  - [Env-def Module](#env-def-module)
+  - [Resource-groups Module](#resource-groups-module)
   - [Vpc Module](#vpc-module)
   - [Ec2 Module](#ec2-module)
 - [AWS Tags](#aws-tags)
@@ -26,9 +26,11 @@
 
 This demonstration has been created for our Application Service unit's purposes to be used in training new cloud specialists who don't need to have any prior knowledge of AWS but who want to start working on AWS projects and building their AWS competence.
 
-This project demonstrates basic aspects how to create cloud infrastructure using code. The actual infra is very simple: just one EC2 instance. We create a virtual private cloud ([vpc](https://aws.amazon.com/vpc/) and an application subnet into which we create the [EC2](https://aws.amazon.com/ec2/). There is also one [security group](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html) in the application subnet that allows inbound traffic only using ssh port 22. The infra creates private/public keys and installs the public key to the VM - you get the private key for trying to connect to the VM once you have deployed the infra.
+This project demonstrates basic aspects how to create cloud infrastructure using code. The actual infra is very simple: just one EC2 instance. We create a virtual private cloud ([vpc](https://aws.amazon.com/vpc/) and an application subnet into which we create the [EC2](https://aws.amazon.com/ec2/). There is also one [security group](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html) in the application subnet that allows inbound traffic only using ssh port 22. The infra creates private/public keys and installs the public key to the VM - you get the private key for connecting to the VM once you have deployed the infra.
 
 I tried to keep this demonstration as simple as possible. The main purpose is not to provide an example how to create a cloud system (e.g. not recommending VMs over containers) but to provide a very simple example of infrastructure code and tooling related creating the infra. I have provided some suggestions how to continue this demonstration at the end of this document - you can also send me email to my corporate email and suggest what kind of AWS or AWS POCs you need in your AS unit - I can help you to create the POCs for your customer meetings.
+
+NOTE: There is an equivalent Azure demonstration - [azure-intro-demo](https://github.com/tieto-pc/azure-intro-demo) - compare the terraform code between these AWS and Azure infra implementations and you realize how similar they are.
 
 
 # AWS Solution
@@ -37,12 +39,12 @@ The diagram below depicts the main services / components of the solution.
 
 ![AWS Intro Demo Architecture](docs/aws-intro-demo.png?raw=true "AWS Intro Demo Architecture")
 
-So, the system is extremely simple (for demonstration purposes): Just one application subnet and one VM doing nothing in the subnet. Subnet security group which allows only ssh traffic to the VM. 
+So, the system is extremely simple (for demonstration purposes): Just one application subnet and one EC2 instance doing nothing in the subnet. Subnet security group which allows only ssh traffic to the EC2 instance. 
 
 
 # Terraform Code
 
-I am using [Terraform](https://www.terraform.io/) as a [infrastructure as code](https://en.wikipedia.org/wiki/Infrastructure_as_code) (IaC) tool. Terraform is very much used both in AWS and AWS side and one of its strenghts compared to cloud native tools (AWS / [CloudFormation](https://aws.amazon.com/cloudformation) and AWS / [ARM template](https://docs.microsoft.com/en-us/aws/aws-resource-manager/resource-group-authoring-templates)) is that you can use Terraform with many cloud providers, you have to learn just one infra language and syntax, and Terraform language (hcl) is pretty powerful and clear. When deciding the actual infra code tool you should consult the customer if there is some tooling already decided. Otherwise you should evaluate ARM template and Terraform and then decided which one is more appropriate for the needs of your cloud project.
+I am using [Terraform](https://www.terraform.io/) as a [infrastructure as code](https://en.wikipedia.org/wiki/Infrastructure_as_code) (IaC) tool. Terraform is very much used both in the AWS and AWS sides and one of its strenghts compared to cloud native tools (AWS / [CloudFormation](https://aws.amazon.com/cloudformation) and AWS / [ARM template](https://docs.microsoft.com/en-us/aws/aws-resource-manager/resource-group-authoring-templates)) is that you can use Terraform with many cloud providers, you have to learn just one infra language and syntax, and Terraform language (hcl) is pretty powerful and clear. When deciding the actual infra code tool you should consult the customer if there is some tooling already decided. Otherwise you should evaluate ARM template and Terraform and then decided which one is more appropriate for the needs of your cloud project.
 
 If you are new to infrastructure as code (IaC) and terraform specifically let's explain the high level structure of the terraform code first. Project's terraform code is hosted in [terraform](terraform) folder.
 
@@ -50,7 +52,8 @@ It is a cloud best practice that you should modularize your infra code and also 
 
 1. **Environment parameters**. In [envs](terraform/envs) folder we host the various environments. In this demo we have only the dev environment, but this folder could have similar env parameterizations for qa, perf, prod environments etc. 
 2. **Environment definition**. In [env-def](terraform/modules/env-def) folder we define the modules that will be used in every environment. The environments inject the environment specific parameters to the env-def module which then creates the actual infra using those parameters by calling various infra modules and forwarding environment parameters to the infra modules.
-3. **Modules**. In [modules](terraform/modules) folder we have the modules that are used by environment definition (env-def, a terraform module itself also). There are modules for the main services used in this demonstration: [vnet](https://docs.microsoft.com/en-us/aws/virtual-network/virtual-networks-overview) and [vm](https://aws.microsoft.com/en-us/services/virtual-machines/), and [resource group](https://docs.microsoft.com/en-us/aws/aws-resource-manager/resource-group-overview#resource-groups) which gathers the infra resources into one view.
+3. **Modules**. In [modules](terraform/modules) folder we have the modules that are used by environment definition (env-def, a terraform module itself also). There are modules for the main services used in this demonstration: [vpc](https://aws.amazon.com/vpc/) and [EC2](https://aws.amazon.com/ec2/), and [resource groups](https://docs.aws.amazon.com/awsconsolehelpdocs/latest/gsg/what-are-resource-groups.html) which gather the infra resources into views regarding the resource group's tag.
+
 
 # Terraform File Types
 
@@ -69,44 +72,43 @@ In this chapter we walk through the terraform modules a bit deeper.
 
 You can find all parameters related to dev env in file [dev.tf](terraform/envs/dev/dev.tf). Open the file.
 
-This file starts with the provider definition (aws apparently in the case of this AWS demonstration). Then there is the terraform backend configuration. More about it later but let's remind you right away that if you want to deploy this demo to your AWS subscription you have to change the ```storage_account_name```, and the name must be unique in all AWS - so try to figure out some unique name like ```jesse-testing-terraform-demo``` etc.
+This file starts with the provider definition (aws apparently in the case of this AWS demonstration). Then there is the terraform backend configuration. More about it later.
 
 After that we have the terraform locals definition - these are provided for this context and we use them to inject the parameter values to the env-def module which follows right after the locals definition.
 
 
-## Env-dev Module
+## Env-def Module
 
 All right! In the previous file we injected dev env parameters to the [env-def.tf](terraform/modules/env-def/env-def.tf) module. Open this file now.
 
 You see that this module defines three other modules. The idea is that this env-def - Environment definition - can be re-used by all envs, like ```dev```, ```qa```, ```perf``` and ```prod``` etc - they all just inject their env specific parameters to the same environment definition which gives a more detailed definition what kind of modules there are in this infrastructure.
 
-So, this environment defition defines three modules: a resource group, virtual network (vnet) and a virtual machine (vm). Let's walk through those modules next.
+So, this environment defition defines three modules: a resource group, virtual private cloud (vpc) and an EC2 instance. Let's walk through those modules next.
 
 
-## Resource-group Module
+## Resource-groups Module
 
-The [resource-group](terraform/modules/resource-group) just defines the main resource group that we are using with all resources in this infra. The resource groups are used in the AWS cloud used for providing a view to a set of resources and it is also easy manually to destroy a set of resources just by deleting the resource group.
+The [resource-groups](terraform/modules/resource-groups) just defines the AWS resource group views for resources regarding some tag.
 
 
 ## Vpc Module
 
-The [vpc](https://aws.amazon.com/vpc/) is a bit longer. First it defines a virtual network (vnet). We inject a [cidr address space](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) for the virtual network. All our resources will be using this address space. Then we define a subnet for making the security group rules easier. 
+The [vpc](https://aws.amazon.com/vpc/) definition is a bit longer. First it defines a virtual private cloud (vpc). We inject a [cidr address space](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) for the virtual network. All our resources will be using this address space. Then we define a subnet for making the security group rules easier. 
 
-After the vnet and subnet we have a security group definition, and then we associate this sg to the subnet. After that we finally have the only rule in this sg - the only inbound traffic that we allow is ssh (port 22).
+After the vpc and subnet we have a security group definition, and then we associate this sg to the subnet. After that we finally have the only rule in this sg - the only inbound traffic that we allow is ssh (port 22).
 
 ## Ec2 Module
 
-The [EC2](https://aws.amazon.com/ec2/) is a also a bit more complex. But let's not be intimidated - I took most of the code from TODO. As you can see, you can find infra code examples quite easily in the net - you don't have to invent the wheel again when creating most of the infra code.
+The [EC2](https://aws.amazon.com/ec2/) module is a also a bit more complex. But let's not be intimidated - I took most of the code from TODO. As you can see, you can find infra code examples quite easily in the net - you don't have to invent the wheel again when creating most of the infra code.
 
-So, in the vm module we first create the ssh keys. I later realized that there is some bash inline scripting here - most possibly won't be working if you run terraform in a Windows box (I must test this myself and make this part a bit simpler e.g. injecting the ssh public key manually here). 
-
+So, in the EC2 module we first create the ssh keys. I later realized that there is some bash inline scripting here - most possibly won't be working if you run terraform in a Windows box (I must test this myself and make this part a bit simpler e.g. injecting the ssh public key manually here). 
 
 
 # AWS Tags
 
-In main resources I have added some tags. 
+In all main resources (that support tagging) I have added some tags. 
 
-- Name: "intro-demo-dev-vnet" - this is the name of the resource.
+- Name: "intro-demo-dev-vpc" - this is the name of the resource.
 - Env: "dev" - this is the env (e.g. dev, qa, perf, prod...)
 - Environment: "intro-demo-dev" - this is the specific environment for a specific infra, i.e. we are running dev for intro-demo.
 - Prefix: "intro-demo" - this is the infra without the env postfix.
@@ -125,7 +127,7 @@ If you figure out some consistent tagging system it is easy for you to find reso
 
 In a small project like this in which you are working alone you don't actually need a Terraform backend but I have used it in this demonstration to make a more realistic demonstration. You should use Terraform backend in any project that has more than one developer. The reason for using a Terraform backend is to store and lock your terraform state file so that many developers cannot concurrently make conflicting changes to the infrastructure.
 
-I have provided a bash script to create the AWS Storage account and Blob container for the terraform state file: [create-aws-storage-account.sh](scripts/create-aws-storage-account.sh).
+You can manually create a S3 bucket and a DynamoDB table to store your terraform backend. I could have created a bash script for creating these entities but I use myself the same S3 bucket and the same DynamoDB table for all my projects so this is basically a one-time task. So, create a S3 bucket and a DynamoDB table. For DynamoDB table you need to name the Partition key as "LockID" (type String). Then configure the S3 bucket name and DynamoDB table name in [dev.tf](terraform/envs/dev/dev.tf).
 
 
 
@@ -150,7 +152,7 @@ Let's finally give detailed demonstration manuscript how you are able to deploy 
    4. ```terraform apply``` => Creates the delta between the current state in the infrastructure and your new state definition in the Terraform configuration files.
 7. Open AWS Portal and browse different views to see what entities were created:
    1. Find the resource group.
-   2. Click the vnet. Browse subnets etc.
+   2. Click the vpc. Browse subnets etc.
    3. Click pip => see the public ip of the VM.
    4. Click vm => Browse different information regarding the VM, e.g. Networking: here you find the firewall definition for ssh we created earlier.
 8. Test to get ssh connection to the VM:
@@ -198,7 +200,7 @@ Before you continue you have to do stupid Windows change. Git for Bash screws th
    4. ```/your-path/terraform apply``` => Creates the delta between the current state in the infrastructure and your new state definition in the Terraform configuration files.
 7. Open AWS Portal and browse different views to see what entities were created:
    1. Find the resource group.
-   2. Click the vnet. Browse subnets etc.
+   2. Click the vpc. Browse subnets etc.
    3. Click pip => see the public ip of the VM.
    4. Click vm => Browse different information regarding the VM, e.g. Networking: here you find the firewall definition for ssh we created earlier.
 8. Test to get ssh connection to the VM:
