@@ -14,3 +14,5 @@ output "app_subnet_id" {
 output "app_subnet_sg_id" {
   value = "${aws_security_group.app-subnet-sg.id}"
 }
+
+

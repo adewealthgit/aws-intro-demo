@@ -170,7 +170,7 @@ Let's finally give detailed demonstration manuscript how you are able to deploy 
 8. Test to get ssh connection to the VM:
    1. terraform output -module=env-def.ec2 => You get the public ip of the EC2. (If you didn't get an ip, run terraform apply again - terraform didn't get the ip to state file in the first round.)
    2. Open another terminal in project root folder.
-   3. ssh -i terraform/modules/vm/.ssh/vm_id_rsa ubuntu@IP-NUMBER-HERE
+   3. ssh -i terraform/modules/ec2/.ssh/vm_id_rsa ubuntu@IP-NUMBER-HERE
 9. Finally destroy the infra using ```terraform destroy``` command. Check manually also using Portal that terraform destroyed all resources. **NOTE**: It is utterly important that you always destroy your infrastructure when you don't need it anymore - otherwise the infra will generate costs to you or to your unit.
 
 

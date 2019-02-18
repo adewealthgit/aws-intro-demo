@@ -5,41 +5,42 @@ locals {
   my_private_key = "vm_id_rsa"
 }
 
-//
-//resource "tls_private_key" "ssh-key" {
-//  algorithm   = "RSA"
-//}
-//
-//# NOTE: If you get 'No available provider "null" plugins'
-//# Try: terraform init, terraform get, terraform plan.
-//# I.e. resource occasionally fails the first time.
-//# When the resource is succesfull you should see the private key
-//# in ./terraform/modules/vm/.ssh folder.
-//resource "null_resource" "save-ssh-key" {
-//  triggers {
-//    key = "${tls_private_key.ssh-key.private_key_pem}"
-//  }
-//
-//  # I realized later that this works only when you are able to use some unix like shell.
-//  # Probably better to provide another version in which one can create the key
-//  # manually and the infra code injects that key to the vm.
-//  # NOTE: We cannot use path.module with Git Bash since it fails with path.
-//  # Use these lines instead with Git Bash:
-//  #    mkdir .ssh
-//  #    echo "${tls_private_key.ssh-key.private_key_pem}" > .ssh/${local.my_private_key}
-//  provisioner "local-exec" {
-//    command = <<EOF
-//      mkdir -p ${path.module}/.ssh
-//      echo "${tls_private_key.ssh-key.private_key_pem}" > ${path.module}/.ssh/${local.my_private_key}
-//      chmod 0600 ${path.module}/.ssh/${local.my_private_key}
-//EOF
-//  }
-//}
-//
-//resource "aws_key_pair" "app_ec2_key_pair" {
-//  key_name   = "${local.my_name}-key-pair"
-//  public_key = "${tls_private_key.ssh-key.public_key_pem}"
-//}
+
+# NOTE: You need to "terraform init" to get the tls provider!
+resource "tls_private_key" "ssh-key" {
+  algorithm   = "RSA"
+}
+
+# NOTE: If you get 'No available provider "null" plugins'
+# Try: terraform init, terraform get, terraform plan.
+# I.e. resource occasionally fails the first time.
+# When the resource is succesfull you should see the private key
+# in ./terraform/modules/vm/.ssh folder.
+resource "null_resource" "save-ssh-key" {
+  triggers {
+    key = "${tls_private_key.ssh-key.private_key_pem}"
+  }
+
+  # I realized later that this works only when you are able to use some unix like shell.
+  # Probably better to provide another version in which one can create the key
+  # manually and the infra code injects that key to the vm.
+  # NOTE: We cannot use path.module with Git Bash since it fails with path.
+  # Use these lines instead with Git Bash:
+  #    mkdir .ssh
+  #    echo "${tls_private_key.ssh-key.private_key_pem}" > .ssh/${local.my_private_key}
+  provisioner "local-exec" {
+    command = <<EOF
+      mkdir -p ${path.module}/.ssh
+      echo "${tls_private_key.ssh-key.private_key_pem}" > ${path.module}/.ssh/${local.my_private_key}
+      chmod 0600 ${path.module}/.ssh/${local.my_private_key}
+EOF
+  }
+}
+
+resource "aws_key_pair" "app_ec2_key_pair" {
+  key_name   = "${local.my_name}-key-pair"
+  public_key = "${tls_private_key.ssh-key.public_key_openssh}"
+}
 
 
 
@@ -100,6 +101,7 @@ resource "aws_instance" "app_ec2" {
   subnet_id              = "${var.app_subnet_id}"
   vpc_security_group_ids = ["${var.app_subnet_sg_id}"]
   iam_instance_profile   = "${aws_iam_instance_profile.app_ec2_iam_profile.name}"
+  key_name = "${aws_key_pair.app_ec2_key_pair.key_name}"
 
   tags {
     Name        = "${local.my_name}"

@@ -52,16 +52,43 @@ resource "aws_subnet" "app-subnet" {
   }
 }
 
+
+# To make a public subnet we need to route its traffic to internet gateway.
+resource "aws_route_table" "app_subnet_route_table" {
+  vpc_id = "${aws_vpc.vpc.id}"
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.app_ec2_internet_gateway.id}"
+  }
+
+  tags {
+    Name        = "${local.my_name}-app-subnet-route-table"
+    Environment = "${local.my_env}"
+    Prefix      = "${var.prefix}"
+    Env         = "${var.env}"
+    Region      = "${var.region}"
+    Terraform   = "true"
+  }
+}
+
+
+resource "aws_route_table_association" "app_subnet_route_table_association" {
+  subnet_id      = "${aws_subnet.app-subnet.id}"
+  route_table_id = "${aws_route_table.app_subnet_route_table.id}"
+}
+
+
 resource "aws_security_group" "app-subnet-sg" {
   name        = "${local.my_name}-app-subnet-sg"
   description = "For testing purposes, create ingress rules manually"
   vpc_id      = "${aws_vpc.vpc.id}"
 
-
+  // Open port 22 (ssh) to test logging into the EC2 instance using your ssh key.
   ingress {
-    from_port   = 0
-    to_port     = 22
     protocol    = "tcp"
+    from_port   = 22
+    to_port     = 22
     cidr_blocks = ["0.0.0.0/0"]
   }
 
