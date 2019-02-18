@@ -24,11 +24,12 @@ module "vpc" {
 
 
 module "ec2" {
-  source           = "../ec2"
-  prefix           = "${var.prefix}"
-  env              = "${var.env}"
-  region           = "${var.region}"
-  vpc_id           = "${module.vpc.vpc_id}"
-  app_subnet_id    = "${module.vpc.app_subnet_id}"
-  app_subnet_sg_id = "${module.vpc.app_subnet_sg_id}"
+  source                    = "../ec2"
+  prefix                    = "${var.prefix}"
+  env                       = "${var.env}"
+  region                    = "${var.region}"
+  vpc_id                    = "${module.vpc.vpc_id}"
+  app_subnet_id             = "${module.vpc.app_subnet_id}"
+  app_subnet_sg_id          = "${module.vpc.app_subnet_sg_id}"
+  my_workstation_is_linux   = "${var.my_workstation_is_linux}"
 }

@@ -16,6 +16,7 @@
 - [Terraform Backend](#terraform-backend)
 - [Demonstration Manuscript](#demonstration-manuscript)
 - [Demonstration Manuscript for Windows Users](#demonstration-manuscript-for-windows-users)
+- [Demonstration Manuscript for Windows Users Using Git Bash](#demonstration-manuscript-for-windows-users-using-git-bash)
 - [Suggestions to Continue this Demonstration](#suggestions-to-continue-this-demonstration)
 
 
@@ -160,7 +161,7 @@ NOTE: These instructions are for Linux (most probably should work for Mac as wel
 
 Let's finally give detailed demonstration manuscript how you are able to deploy the infra of this demonstration to your AWS account. You need an AWS account for this demonstration. You can order a private AWS account or you can contact your line manager if there is an AWS development account in your unit that you can use for self-study purposes to learn how to use AWS. **NOTE**: Watch for costs! Always finally destroy your infrastructure once you are ready (never leave any resources to run indefinitely in your AWS account to generate costs).
 
-1. Install [Terraform](https://www.terraform.io/). 
+1. Install [Terraform](https://www.terraform.io/). You might also like to add Terraform support for your favorite editor (e.g. there is a Terraform extension for VS Code).
 2. Install [AWS command line interface](https://aws.amazon.com/cli).
 3. Clone this project: git clone https://github.com/tieto-pc/aws-intro-demo.git
 4. Configure the terraform backend as instructed in chapter "Terraform Backend". Create AWS credentials file as instructed in the same chapter.
@@ -182,11 +183,26 @@ Let's finally give detailed demonstration manuscript how you are able to deploy 
 
 # Demonstration Manuscript for Windows Users
 
+1. Install [Terraform](https://www.terraform.io/). 
+2. Install [AWS command line interface](https://aws.amazon.com/cli).
+3. Clone this project: git clone https://github.com/tieto-pc/aws-intro-demo.git
+4. Configure the terraform backend as instructed in chapter "Terraform Backend". Create AWS credentials file as instructed in the same chapter.
+5. Open Windows command prompt. Give command: set AWS_PROFILE=YOUR-AWS-PROFILE-HERE
+6. 
+
+
+
+
+
+# Demonstration Manuscript for Windows Users Using Git Bash
+
+**TODO**: Remove this chapter once you have verified deployment using native Windows command line.
+
 **NOTE**: If some Windows guy volunteers to test deploying this demonstration using his/her Windows workstation and **native Windows command prompt** (not Git Bash as I used) and converts the [create-aws-storage-account.sh](scripts/create-aws-storage-account.sh) script to bat/powerhell script and writes the Windows instructions in this chapter I promise to give him/her one full hour personal face-to-face AWS training in Keila premises. And honorary mention as the writer of this chapter. 
 
 But until we have better instructions from a Windows specialist I can tell how I tested deploying the infra using (virtual) Windows 10 (NOTE: these are a shortened version of the actual Demonstration Manuscript chapter - read above chapter as well).
 
-1. Install [Terraform](https://www.terraform.io/). 
+1. Install [Terraform](https://www.terraform.io/). You might also like to add Terraform support for your favorite editor (e.g. there is a Terraform extension for VS Code).
 2. Install [AWS command line interface](https://aws.amazon.com/cli).
 3. Clone this project: git clone https://github.com/tieto-pc/aws-intro-demo.git
 4. Configure the terraform backend as instructed in chapter "Terraform Backend". Create AWS credentials file as instructed in the same chapter.

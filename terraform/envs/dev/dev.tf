@@ -45,11 +45,14 @@ locals {
   # Use unique environment names, e.g. dev, custqa, qa, test, perf, ci, prod...
   my_env                    = "dev"
   # Use consistent prefix, e.g. <cloud-provider>-<demo-target/purpose>-demo, e.g. aws-ecs-demo
-  my_prefix = "aws-ecs-demo"
+  my_prefix                 = "aws-intro-demo"
   all_demos_terraform_info  = "tieto-pc-demos-terraform-backends"
   # NOTE: Reserve 10.20.*.* address space for this demonstration.
   vpc_cidr_block            = "10.50.0.0/16"
   app_subnet_cidr_block     = "10.50.1.0/24"
+  # Linux or Mac: "1", Windows: "0"
+  # This is a hack related to the way how ssh key is stored differently in Linux vs Windows machines.
+  my_workstation_is_linux   = "1"
 }
 
 provider "aws" {
@@ -64,7 +67,8 @@ module "env-def" {
   env      = "${local.my_env}"
   region   = "${local.my_region}"
 
-  vpc_cidr_block        = "${local.vpc_cidr_block}"
-  app_subnet_cidr_block = "${local.app_subnet_cidr_block}"
+  vpc_cidr_block            = "${local.vpc_cidr_block}"
+  app_subnet_cidr_block     = "${local.app_subnet_cidr_block}"
+  my_workstation_is_linux   = "${local.my_workstation_is_linux}"
 }
 
