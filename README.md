@@ -164,15 +164,14 @@ Let's finally give detailed demonstration manuscript how you are able to deploy 
    3. ```terraform plan``` => Gives the plan regarding the changes needed to make to your infra. **NOTE**: always read the plan carefully!
    4. ```terraform apply``` => Creates the delta between the current state in the infrastructure and your new state definition in the Terraform configuration files.
 7. Open AWS Portal and browse different views to see what entities were created:
-   1. Find the resource group.
+   1. Resource Groups => Saved groups => Click some resource group
    2. Click the vpc. Browse subnets etc.
-   3. Click pip => see the public ip of the VM.
-   4. Click vm => Browse different information regarding the VM, e.g. Networking: here you find the firewall definition for ssh we created earlier.
+   4. Click EC2 instance => Browse different information regarding the EC2.
 8. Test to get ssh connection to the VM:
-   1. terraform output -module=env-def.vm => You get the public ip of the VM. (If you didn't get an ip, run terraform apply again - terraform didn't get the ip to state file in the first round.)
+   1. terraform output -module=env-def.ec2 => You get the public ip of the EC2. (If you didn't get an ip, run terraform apply again - terraform didn't get the ip to state file in the first round.)
    2. Open another terminal in project root folder.
    3. ssh -i terraform/modules/vm/.ssh/vm_id_rsa ubuntu@IP-NUMBER-HERE
-9. Finally destroy the infra using ```terraform destroy``` command. Check manually also using Portal that terraform destroyed the resource group (if the resource group is gone all the resources are gone also). **NOTE**: It is utterly important that you always destroy your infrastructure when you don't need it anymore - otherwise the infra will generate costs to you or to your unit.
+9. Finally destroy the infra using ```terraform destroy``` command. Check manually also using Portal that terraform destroyed all resources. **NOTE**: It is utterly important that you always destroy your infrastructure when you don't need it anymore - otherwise the infra will generate costs to you or to your unit.
 
 
 # Demonstration Manuscript for Windows Users
@@ -220,7 +219,7 @@ Before you continue you have to do stupid Windows change. Git for Bash screws th
    1. terraform output -module=env-def.vm => You get the public ip of the VM. (If you didn't get an ip, run terraform apply again - terraform didn't get the ip to state file in the first round.)
    2. Open another terminal in project root folder.
    3. ssh -i YOUR-PATH/vm_id_rsa ubuntu@IP-NUMBER-HERE
-9.  Finally destroy the infra using ```terraform destroy``` command. Check manually also using Portal that terraform destroyed the resource group (if the resource group is gone all the resources are gone also). **NOTE**: It is utterly important that you always destroy your infrastructure when you don't need it anymore - otherwise the infra will generate costs to you or to your unit.
+9. Finally destroy the infra using ```terraform destroy``` command. Check manually also using Portal that terraform destroyed all resources. **NOTE**: It is utterly important that you always destroy your infrastructure when you don't need it anymore - otherwise the infra will generate costs to you or to your unit.
 
 
 

@@ -41,13 +41,17 @@ resource "aws_security_group" "app-subnet-sg" {
   description = "For testing purposes, create ingress rules manually"
   vpc_id      = "${aws_vpc.vpc.id}"
 
+
   ingress {
-    protocol    = "tcp"
-    from_port   = 22
+    from_port   = 0
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   // Terraform removes the default rule.
+  // Let's comment this now since terraform wants to change the sg in every apply.
+  // See: https://github.com/hashicorp/terraform/issues/9602
   egress {
     protocol    = "-1"
     from_port   = 0
