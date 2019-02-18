@@ -56,7 +56,7 @@ EOF
 
 resource "aws_key_pair" "app_ec2_key_pair" {
   key_name   = "${local.my_name}-key-pair"
-  public_key = "${tls_private_key.ssh-key.public_key_openssh}"
+  public_key = "${tls_private_key.app_ec2_ssh_key.public_key_openssh}"
 }
 
 
