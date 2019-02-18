@@ -37,6 +37,7 @@ EOF
 }
 
 # Then the Windows version (my_workstation_is_linux = 0)
+# TODO: Needs to implement how to store the private key in Windows!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 resource "null_resource" "app_ec2_save_ssh_key_windows" {
   count = "${1 - var.my_workstation_is_linux}"
   triggers {
