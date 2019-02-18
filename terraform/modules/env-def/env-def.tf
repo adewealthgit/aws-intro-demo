@@ -22,3 +22,13 @@ module "vpc" {
   app_subnet_cidr_block = "${var.app_subnet_cidr_block}"
 }
 
+
+module "ec2" {
+  source           = "../ec2"
+  prefix           = "${var.prefix}"
+  env              = "${var.env}"
+  region           = "${var.region}"
+  vpc_id           = "${module.vpc.vpc_id}"
+  app_subnet_id    = "${module.vpc.app_subnet_id}"
+  app_subnet_sg_id = "${module.vpc.app_subnet_sg_id}"
+}

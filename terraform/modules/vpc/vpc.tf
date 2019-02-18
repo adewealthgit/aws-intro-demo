@@ -7,11 +7,27 @@ locals {
 data "aws_availability_zones" "available" {}
 
 
+
 resource "aws_vpc" "vpc" {
   cidr_block = "${var.vpc_cidr_block}"
 
   tags {
     Name        = "${local.my_name}"
+    Environment = "${local.my_env}"
+    Prefix      = "${var.prefix}"
+    Env         = "${var.env}"
+    Region      = "${var.region}"
+    Terraform   = "true"
+  }
+}
+
+
+# Eip needs Internet gateway.
+resource "aws_internet_gateway" "app_ec2_internet_gateway" {
+  vpc_id = "${aws_vpc.vpc.id}"
+
+  tags {
+    Name        = "${local.my_name}-ig"
     Environment = "${local.my_env}"
     Prefix      = "${var.prefix}"
     Env         = "${var.env}"
