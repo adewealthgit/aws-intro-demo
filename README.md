@@ -153,6 +153,12 @@ Whenever you give terraform commands or use aws cli you should give the AWS prof
 AWS_PROFILE=MY-PROFILE terraform init
 ```
 
+NOTE: If you need to delete the backend completely, then delete these:
+- the ```.terraform``` folder in your terraform/envs/dev folder
+- the terraform state file in your S3 bucket (do not delete the bucket - just the file)
+- the related items in the DynamoDB Lock table
+
+
 
 # Demonstration Manuscript
 
