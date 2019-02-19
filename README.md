@@ -16,7 +16,6 @@
 - [Terraform Backend](#terraform-backend)
 - [Demonstration Manuscript](#demonstration-manuscript)
 - [Demonstration Manuscript for Windows Users](#demonstration-manuscript-for-windows-users)
-- [Demonstration Manuscript for Windows Users Using Git Bash](#demonstration-manuscript-for-windows-users-using-git-bash)
 - [Suggestions to Continue this Demonstration](#suggestions-to-continue-this-demonstration)
 
 
@@ -188,52 +187,22 @@ Let's finally give detailed demonstration manuscript how you are able to deploy 
 3. Clone this project: git clone https://github.com/tieto-pc/aws-intro-demo.git
 4. Configure the terraform backend as instructed in chapter "Terraform Backend". Create AWS credentials file as instructed in the same chapter.
 5. Open Windows command prompt. Give command: set AWS_PROFILE=YOUR-AWS-PROFILE-HERE
-6. 
-
-
-
-
-
-# Demonstration Manuscript for Windows Users Using Git Bash
-
-**TODO**: Remove this chapter once you have verified deployment using native Windows command line.
-
-**NOTE**: If some Windows guy volunteers to test deploying this demonstration using his/her Windows workstation and **native Windows command prompt** (not Git Bash as I used) and converts the [create-aws-storage-account.sh](scripts/create-aws-storage-account.sh) script to bat/powerhell script and writes the Windows instructions in this chapter I promise to give him/her one full hour personal face-to-face AWS training in Keila premises. And honorary mention as the writer of this chapter. 
-
-But until we have better instructions from a Windows specialist I can tell how I tested deploying the infra using (virtual) Windows 10 (NOTE: these are a shortened version of the actual Demonstration Manuscript chapter - read above chapter as well).
-
-1. Install [Terraform](https://www.terraform.io/). You might also like to add Terraform support for your favorite editor (e.g. there is a Terraform extension for VS Code).
-2. Install [AWS command line interface](https://aws.amazon.com/cli).
-3. Clone this project: git clone https://github.com/tieto-pc/aws-intro-demo.git
-4. Configure the terraform backend as instructed in chapter "Terraform Backend". Create AWS credentials file as instructed in the same chapter.
-
-Before you continue further you have to do stupid Windows change. Git for Bash screws the directory when creating the ssh key and trying to store the private key to local disk. If you are using Git Bash you have to change the [ec2.tf](terraform/modules/ec2/ec2.tf):
-
-```text
-      mkdir -p ${path.module}/.ssh
-      echo "${tls_private_key.ssh-key.private_key_pem}" > ${path.module}/.ssh/${local.my_private_key}
-      chmod 0600 ${path.module}/.ssh/${local.my_private_key}
-=>
-      mkdir .ssh
-      echo "${tls_private_key.ssh-key.private_key_pem}" > .ssh/${local.my_private_key}
-```
-
-... this way the EC2 gets created but terraform still doesn't store the private key to your Windows workstation local disk, luckily terraform prints the private disk, so you can copy-paste it to file (and figure out the file format). NOTE: I'll find a way to automate this part also in a Windows workstation.
-
-5. With Git Bash go to [dev](terraform/envs/dev) folder. Hopefully you installed terraform some reasonable directory (I installed in: /c/local/terraform_0.11.11/terraform.exe). Give commands:
-   1. ```/your-path/terraform init``` => Initializes the Terraform backend state.
-   2. ```/your-path/terraform get``` => Gets the terraform modules of this project.
-   3. ```/your-path/terraform plan``` => Gives the plan regarding the changes needed to make to your infra. **NOTE**: always read the plan carefully!
-   4. ```/your-path/terraform apply``` => Creates the delta between the current state in the infrastructure and your new state definition in the Terraform configuration files.
-6. Open AWS Portal and browse different views to see what entities were created:
+6. Change the ssh key creation to use Windows style: [dev.tf](terraform/envs/dev/dev.tf) change the value of local variable ```my_workstation_is_linux``` from default value "1" (meaning your workstation is linux/mac) to value "0" (meaning your workstation is windows). This is a bit of a hack but needed for storing the private ssh key automatically to your workstation's local disk to make things easier in this demo (no need to create the ssh keys manually and use it in the infra code).
+7. Open console in [dev](terraform/envs/dev) folder. Give commands
+   1. ```terraform init``` => Initializes the Terraform backend state.
+   2. ```terraform get``` => Gets the terraform modules of this project.
+   3. ```terraform plan``` => Gives the plan regarding the changes needed to make to your infra. **NOTE**: always read the plan carefully!
+   4. ```terraform apply``` => Creates the delta between the current state in the infrastructure and your new state definition in the Terraform configuration files.
+8. Open AWS Portal and browse different views to see what entities were created:
    1. Resource Groups => Saved groups => Click some resource group
    2. Click the vpc. Browse subnets etc.
    3. Click EC2 instance => Browse different information regarding the EC2.
-7. Test to get ssh connection to the EC2 instance:
-   1. terraform output -module=env-def.ec2 => You get the public ip of the EC2 instance. (If you didn't get an ip, run terraform apply again - terraform didn't get the ip to state file in the first round.)
-   2. Open another terminal in project root folder.
-   3. ssh -i YOUR-PATH/vm_id_rsa ubuntu@IP-NUMBER-HERE
-8. Finally destroy the infra using ```terraform destroy``` command. Check manually also using Portal that terraform destroyed all resources. **NOTE**: It is utterly important that you always destroy your infrastructure when you don't need it anymore - otherwise the infra will generate costs to you or to your unit.
+9. Test to get ssh connection to the EC2 instance:
+   1. terraform output -module=env-def.ec2 => You get the public ip of the EC2. (If you didn't get an ip, run terraform apply again - terraform didn't get the ip to state file in the first round.)
+   2. Open another terminal in project root folder (powershell).
+   3. ssh -i terraform/modules/ec2/.ssh/vm_id_rsa ubuntu@IP-NUMBER-HERE (**TODO**: Here I need some help. I'm not a Windows user so I have no idea how to set the file permissions regarding the private ssh key. Also when trying with ssh client in Windows the ssh client complained about wrong key format - I copy-pasted the content of the ssh key to my Linux and the key worked there just fine. So, I'd appreciate if some Windows user writes this section how to try ssh connection to the EC2 instance.)
+10. Finally destroy the infra using ```terraform destroy``` command. Check manually also using Portal that terraform destroyed all resources. **NOTE**: It is utterly important that you always destroy your infrastructure when you don't need it anymore - otherwise the infra will generate costs to you or to your unit.
+ 
 
 
 

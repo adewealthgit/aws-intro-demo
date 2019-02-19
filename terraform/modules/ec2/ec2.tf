@@ -36,8 +36,8 @@ EOF
   }
 }
 
+
 # Then the Windows version (my_workstation_is_linux = 0)
-# TODO: Needs to implement how to store the private key in Windows!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 resource "null_resource" "app_ec2_save_ssh_key_windows" {
   count = "${1 - var.my_workstation_is_linux}"
   triggers {
@@ -45,14 +45,13 @@ resource "null_resource" "app_ec2_save_ssh_key_windows" {
   }
 
   provisioner "local-exec" {
+    interpreter = ["PowerShell"]
     command = <<EOF
-      mkdir -p ${path.module}/.ssh
-      echo "*********************** WINDOWS ************"
-      chmod 0600 ${path.module}/.ssh/${local.my_private_key}
+      md ${path.module}\\.ssh
+      echo "${tls_private_key.app_ec2_ssh_key.private_key_pem}" > ${path.module}\\.ssh\\${local.my_private_key}
 EOF
   }
 }
-
 
 
 resource "aws_key_pair" "app_ec2_key_pair" {
