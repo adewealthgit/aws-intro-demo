@@ -1,4 +1,4 @@
-# AWS Short Intro Demonstration For AS Specialists  <!-- omit in toc -->
+# AWS Short Intro Demonstration For Tieto Specialists  <!-- omit in toc -->
 
 
 # Table of Contents  <!-- omit in toc -->
@@ -16,12 +16,12 @@
 - [Terraform Backend](#terraform-backend)
 - [Demonstration Manuscript](#demonstration-manuscript)
 - [Demonstration Manuscript for Windows Users](#demonstration-manuscript-for-windows-users)
-- [Suggestions to Continue this Demonstration](#suggestions-to-continue-this-demonstration)
+- [Suggestions How to Continue this Demonstration](#suggestions-how-to-continue-this-demonstration)
 
 
 # Introduction
 
-This demonstration has been created for our Application Service unit's purposes to be used in training new cloud specialists who don't need to have any prior knowledge of AWS but who want to start working on AWS projects and building their AWS competence.
+This demonstration can be used in training new cloud specialists who don't need to have any prior knowledge of AWS but who want to start working on AWS projects and building their AWS competence.
 
 This project demonstrates basic aspects how to create cloud infrastructure using code. The actual infra is very simple: just one EC2 instance. We create a virtual private cloud ([vpc](https://aws.amazon.com/vpc/) and an application subnet into which we create the [EC2](https://aws.amazon.com/ec2/). There is also one [security group](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html) in the application subnet that allows inbound traffic only using ssh port 22. The infra creates private/public keys and installs the public key to the EC2 instance - you get the private key for connecting to the EC2 instance once you have deployed the infra.
 
@@ -212,7 +212,7 @@ Let's finally give detailed demonstration manuscript how you are able to deploy 
 
 
 
-# Suggestions to Continue this Demonstration
+# Suggestions How to Continue this Demonstration
 
 We could add e.g. an autoscaling group and a load balancer to this demonstration but let's keep this demonstration as short as possible so that it can be used as an AWS introduction demonstration. If there are some improvement suggestions that our AS developers would like to see in this demonstration let's create other small demonstrations for those purposes, e.g.:
 - Create a custom Linux image that has the Java app baked in.
