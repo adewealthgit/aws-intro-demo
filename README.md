@@ -149,9 +149,19 @@ aws_secret_access_key = YOUR-SECRET-KEY
 
 Whenever you give terraform commands or use aws cli you should give the AWS profile environment variable with the command, e.g.:
 
+Linux:
+
 ```bash
 AWS_PROFILE=MY-PROFILE terraform init
 ```
+
+Windows:
+
+```dos
+set AWS_PROFILE=MY-PROFILE
+terraform init
+```
+
 
 NOTE: If you need to delete the backend completely, then delete these:
 - the ```.terraform``` folder in your terraform/envs/dev folder
