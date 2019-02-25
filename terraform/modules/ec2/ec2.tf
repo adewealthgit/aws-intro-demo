@@ -38,6 +38,8 @@ EOF
 
 
 # Then the Windows version (my_workstation_is_linux = 0)
+# Solution to store the file in Windows with UTF-8 encoding
+# and fixing the access rights for the file kindly provided by Sami Huhtiniemi.
 resource "null_resource" "app_ec2_save_ssh_key_windows" {
   count = "${1 - var.my_workstation_is_linux}"
   triggers {
@@ -48,7 +50,10 @@ resource "null_resource" "app_ec2_save_ssh_key_windows" {
     interpreter = ["PowerShell"]
     command = <<EOF
       md ${path.module}\\.ssh
-      echo "${tls_private_key.app_ec2_ssh_key.private_key_pem}" > ${path.module}\\.ssh\\${local.my_private_key}
+      [IO.File]::WriteAllLines(("${path.module}\.ssh\${local.my_private_key}"), "${tls_private_key.vm_ssh_key.private_key_pem}")
+      icacls ${path.module}\.ssh\${local.my_private_key} /reset
+      icacls ${path.module}\.ssh\${local.my_private_key} /grant:r "$($env:USERNAME):(R,W)"
+      icacls ${path.module}\.ssh\${local.my_private_key} /inheritance:r
 EOF
   }
 }
