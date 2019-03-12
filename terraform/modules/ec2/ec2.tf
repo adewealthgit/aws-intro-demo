@@ -123,7 +123,7 @@ resource "aws_instance" "app_ec2" {
   subnet_id              = "${var.app_subnet_id}"
   vpc_security_group_ids = ["${var.app_subnet_sg_id}"]
   iam_instance_profile   = "${aws_iam_instance_profile.app_ec2_iam_profile.name}"
-  key_name = "${aws_key_pair.app_ec2_key_pair.key_name}"
+  key_name               = "${aws_key_pair.app_ec2_key_pair.key_name}"
 
   tags {
     Name        = "${local.my_name}"
