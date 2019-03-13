@@ -23,6 +23,8 @@
 
 This demonstration can be used in training new cloud specialists who don't need to have any prior knowledge of AWS but who want to start working on AWS projects and building their AWS competence.
 
+This demonstration is basically the same as [aws-intro-cloudformation-demo](https://github.com/tieto-pc/aws-intro-cloudformation-demo) with one difference: aws-intro-demo uses [Terraform](https://www.terraform.io/) as IaC tool, and aws-intro-cloudformation-demo uses [CloudFormation](https://aws.amazon.com/cloudformation). The idea is to introduce another way to create infrastructure code in AWS and let developers to compare Terraform and CloudFormation and make their own decision which tool to use in their future projects.
+
 This project demonstrates basic aspects how to create cloud infrastructure using code. The actual infra is very simple: just one EC2 instance. We create a virtual private cloud [vpc](https://aws.amazon.com/vpc/) and an application subnet into which we create the [EC2](https://aws.amazon.com/ec2/). There is also one [security group](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html) in the application subnet that allows inbound traffic only using ssh port 22. The infra creates private/public keys and installs the public key to the EC2 instance - you get the private key for connecting to the EC2 instance once you have deployed the infra.
 
 I tried to keep this demonstration as simple as possible. The main purpose is not to provide an example how to create a cloud system (e.g. not recommending EC2s over containers) but to provide a very simple example of infrastructure code and tooling related creating the infra. I have provided some suggestions how to continue this demonstration at the end of this document - you can also send me email to my corporate email and suggest what kind of AWS or AWS POCs you need in your AS team - I can help you to create the POCs for your customer meetings.
@@ -195,6 +197,8 @@ Let's finally give detailed demonstration manuscript how you are able to deploy 
    3. ssh -i terraform/modules/ec2/.ssh/vm_id_rsa ubuntu@IP-NUMBER-HERE
 8. Finally destroy the infra using ```terraform destroy``` command. Check manually also using Portal that terraform destroyed all resources. **NOTE**: It is utterly important that you always destroy your infrastructure when you don't need it anymore - otherwise the infra will generate costs to you or to your unit.
 
+The official demo is over. Next you could do the equivalent [aws-intro-cloudformation-demo](https://github.com/tieto-pc/aws-intro-cloudformation-demo) that uses CloudFormation. Then compare the Terraform and CloudFormation code and also the workflows. Reflect the two tools - which pros and cons they have when compared to each other? Which one would you like to start using? And why?
+
 
 # Demonstration Manuscript for Windows Users
 
@@ -221,7 +225,7 @@ Let's finally give detailed demonstration manuscript how you are able to deploy 
    3. ssh -i terraform/modules/ec2/.ssh/vm_id_rsa ubuntu@IP-NUMBER-HERE 
 10. Finally destroy the infra using ```terraform destroy``` command. Check manually also using Portal that terraform destroyed all resources. **NOTE**: It is utterly important that you always destroy your infrastructure when you don't need it anymore - otherwise the infra will generate costs to you or to your unit.
  
-
+The official demo is over. Next you could do the equivalent [aws-intro-cloudformation-demo](https://github.com/tieto-pc/aws-intro-cloudformation-demo) that uses CloudFormation. Then compare the Terraform and CloudFormation code and also the workflows. Reflect the two tools - which pros and cons they have when compared to each other? Which one would you like to start using? And why?
 
 # Suggestions How to Continue this Demonstration
 
