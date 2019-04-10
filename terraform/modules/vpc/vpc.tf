@@ -1,6 +1,6 @@
 locals {
-  my_name = "${var.prefix}-${var.env}-vpc"
-  my_env = "${var.prefix}-${var.env}"
+  my_name       = "${var.prefix}-${var.env}-vpc"
+  my_deployment = "${var.prefix}-${var.env}"
 }
 
 
@@ -13,9 +13,9 @@ resource "aws_vpc" "vpc" {
 
   tags {
     Name        = "${local.my_name}"
-    Environment = "${local.my_env}"
+    Deployment  = "${local.my_deployment}"
     Prefix      = "${var.prefix}"
-    Env         = "${var.env}"
+    Environment = "${var.env}"
     Region      = "${var.region}"
     Terraform   = "true"
   }
@@ -28,9 +28,9 @@ resource "aws_internet_gateway" "app_ec2_internet_gateway" {
 
   tags {
     Name        = "${local.my_name}-ig"
-    Environment = "${local.my_env}"
+    Deployment  = "${local.my_deployment}"
     Prefix      = "${var.prefix}"
-    Env         = "${var.env}"
+    Environment = "${var.env}"
     Region      = "${var.region}"
     Terraform   = "true"
   }
@@ -44,9 +44,9 @@ resource "aws_subnet" "app-subnet" {
 
   tags {
     Name        = "${local.my_name}-app-subnet"
-    Environment = "${local.my_env}"
+    Deployment  = "${local.my_deployment}"
     Prefix      = "${var.prefix}"
-    Env         = "${var.env}"
+    Environment = "${var.env}"
     Region      = "${var.region}"
     Terraform   = "true"
   }
@@ -64,9 +64,9 @@ resource "aws_route_table" "app_subnet_route_table" {
 
   tags {
     Name        = "${local.my_name}-app-subnet-route-table"
-    Environment = "${local.my_env}"
+    Deployment  = "${local.my_deployment}"
     Prefix      = "${var.prefix}"
-    Env         = "${var.env}"
+    Environment = "${var.env}"
     Region      = "${var.region}"
     Terraform   = "true"
   }
@@ -104,9 +104,9 @@ resource "aws_security_group" "app-subnet-sg" {
 
   tags {
     Name        = "${local.my_name}-app-subnet-sg"
-    Environment = "${local.my_env}"
+    Deployment  = "${local.my_deployment}"
     Prefix      = "${var.prefix}"
-    Env         = "${var.env}"
+    Environment = "${var.env}"
     Region      = "${var.region}"
     Terraform   = "true"
   }

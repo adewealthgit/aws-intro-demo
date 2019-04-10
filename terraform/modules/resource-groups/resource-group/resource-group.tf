@@ -1,7 +1,6 @@
 locals {
   # Group name cannot start with "aws".
   my_name   = "rg-${var.prefix}-${var.env}-${var.tag_key}-rg"
-  my_env    = "${var.env}"
 }
 
 resource "aws_resourcegroups_group" "rg" {

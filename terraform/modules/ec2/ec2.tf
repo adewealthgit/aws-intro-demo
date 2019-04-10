@@ -1,7 +1,7 @@
 locals {
-  my_name = "${var.prefix}-${var.env}-ec2"
-  my_env = "${var.prefix}-${var.env}"
-  ubuntu18_ami = "ami-00035f41c82244dab"
+  my_name        = "${var.prefix}-${var.env}-ec2"
+  my_deployment  = "${var.prefix}-${var.env}"
+  ubuntu18_ami   = "ami-00035f41c82244dab"
   my_private_key = "vm_id_rsa"
 }
 
@@ -93,9 +93,9 @@ EOF
 
   tags {
     Name        = "${local.my_name}-iam-role"
-    Environment = "${local.my_env}"
+    Deployment  = "${local.my_deployment}"
     Prefix      = "${var.prefix}"
-    Env         = "${var.env}"
+    Environment = "${var.env}"
     Region      = "${var.region}"
     Terraform   = "true"
   }
@@ -108,9 +108,9 @@ resource "aws_eip" "app_ec2_eip" {
 
   tags {
     Name        = "${local.my_name}-eip"
-    Environment = "${local.my_env}"
+    Deployment  = "${local.my_deployment}"
     Prefix      = "${var.prefix}"
-    Env         = "${var.env}"
+    Environment = "${var.env}"
     Region      = "${var.region}"
     Terraform   = "true"
   }
@@ -127,9 +127,9 @@ resource "aws_instance" "app_ec2" {
 
   tags {
     Name        = "${local.my_name}"
-    Environment = "${local.my_env}"
+    Deployment  = "${local.my_deployment}"
     Prefix      = "${var.prefix}"
-    Env         = "${var.env}"
+    Environment = "${var.env}"
     Region      = "${var.region}"
     Terraform   = "true"
   }
