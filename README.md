@@ -93,12 +93,14 @@ So, this environment defition defines three modules: resource groups, virtual pr
 
 The [resource-groups](terraform/modules/resource-groups) module defines a dedicated resource group for each tag key I use in all AWS resources that support tagging. The tag keys are:
 
+```text
 - Name: <prefix>-<env>-<name-of-the-resource>, e.g. "aws-ecs-demo-dev-vpc" (not used in resource groups, of course)
 - Environment: <env>, e.g. "dev"
 - Deployment: <prefix>-<env>, e.g. "aws-intro-demo-dev"
 - Prefix: <prefix>, e.g. "aws-intro-demo"
 - Region: <region>, e.g. "eu-west-1
 - Terraform: "true" (fixed)
+```
 
 This way you can pretty easily search the resources. Examples:
 
