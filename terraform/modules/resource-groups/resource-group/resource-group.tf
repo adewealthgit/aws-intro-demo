@@ -1,5 +1,5 @@
 locals {
-  # Group name cannot start with "aws".
+  # Group name cannot start with "aws - safe-guarding name with rg- prefix.
   my_name   = "rg-${var.prefix}-${var.env}-${var.tag_key}-rg"
 }
 
